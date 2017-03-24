@@ -1,0 +1,14 @@
+Administrator manifest
+64bit
+Visible application
+Delete on exit
+Overwrite existing files
+Temporary Directory
+
+
+
+Include:
+	appearance.exe
+	ThemeTool.exe
+	Taskbar.reg
+	Taskbar10.reg
