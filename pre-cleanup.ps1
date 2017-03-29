@@ -13,6 +13,34 @@
 		powercfg /change /standby-timeout-ac 0
 		powercfg /change /hibernate-timeout-ac 0
 
+# UAC Settings
+
+	Write-Host "Enabling secure UAC settings..."
+
+    		New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "FilterAdministratorToken" -Value "0" -PropertyType DWORD -Force | Out-Null
+    		New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableUIADesktopToggle" -Value "0" -PropertyType DWORD -Force | Out-Null
+    		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "2"
+    		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorUser" -Value "1"
+    		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value "1"
+    		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableVirtualization" -Value "1"
+
+	Write-Host "`n"
+
+# Set time and date
+
+	Write-Host "Setting time and date..."
+
+    		tzutil.exe /s "Central Standard Time" | Out-Null
+
+    		If ( $(Get-Service -Name "w32time").Status -ne "Running" ) { Restart-Service -Name "w32time" }
+
+    		w32tm.exe /config /manualpeerlist:"time.windows.com,0x8 0.us.pool.ntp.org,0x8 1.us.pool.ntp.org,0x8 2.us.pool.ntp.org,0x8" /syncfromflags:MANUAL /update | Out-Null
+   		w32tm.exe /config /update | Out-Null
+
+    		Restart-Service -Name "w32time"
+	
+	Write-Host "`n"
+
 # Detect Windows version and apply appropriate settings
 
 	$majorver=[System.Environment]::OSVersion.Version.Major
@@ -125,6 +153,10 @@
 
 					Restart-Service -Force MpsSvc
 
+                # Enable SmartScreen
+
+                    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "RequireAdmin"
+
 				Write-Host "`n"
 				Write-Host "Settings have been applied!"
 				Write-Host "`n"
@@ -224,6 +256,10 @@
 				# Restart the Firewall for changes to go into effect
 
 					Restart-Service -Force MpsSvc
+
+                		# Enable SmartScreen
+
+                    			Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "RequireAdmin"
 
 				Write-Host "`n"
 				Write-Host "Settings have been applied!"
