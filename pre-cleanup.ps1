@@ -44,6 +44,7 @@
 # Detect Windows version and apply appropriate settings
 
 	$majorver=[System.Environment]::OSVersion.Version.Major
+
 	$minorver=[System.Environment]::OSVersion.Version.Minor
 
 	$ver=$(echo $majorver"."$minorver)
@@ -59,24 +60,28 @@
 
 				# Check if .NET 3.5 is installed
 		
-				$35status = Get-WindowsOptionalFeature -Online | Where-Object {$_.FeatureName -eq "NetFx3"} | ForEach-Object { $_.State }
+					$35status = Get-WindowsOptionalFeature -Online | Where-Object {$_.FeatureName -eq "NetFx3"} | ForEach-Object { $_.State }
 
 				# If .NET 3.5 is not installed, install it
 
 					if ( $35status -ne "Enabled" ) { Enable-WindowsOptionalFeature -Online -NoRestart -FeatureName NetFx3 | Out-Null }
 
 				# Set to the Default Theme using ThemeTool.exe
+
 					Start-Process "$env:p2eincfilepath\ThemeTool.exe" -ArgumentList "changetheme $env:windir\Resources\Themes\aero.theme"
 					sleep 5
 
 				# Set Taskbar to the bottom of the screen and disable auto-hide
+
 					Start-Process regedit -ArgumentList "/s","$env:p2eincfilepath\Taskbar10.reg"
 			
 				# Set default wallpaper
+
 					Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers" -Name "BackgroundHistoryPath0" -Value "$env:windir\Web\Wallpaper\Windows\img0.jpg"
 					Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "Wallpaper" -Value "$env:windir\Web\Wallpaper\Windows\img0.jpg"
 
 				# ON  - Set wallpaper type to a static image
+
 					Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers" -Name "BackgroundType" -Value "0"
 
 				# ON  - Automatically pick an accent color based on wallpaper
@@ -150,12 +155,10 @@
 					Set-Service MpsSvc -StartupType "Automatic"
 
 				# Restart the Firewall for changes to go into effect
-
 					Restart-Service -Force MpsSvc
 
-                # Enable SmartScreen
-
-                    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "RequireAdmin"
+                		# Enable SmartScreen
+                    			Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "RequireAdmin"
 
 				Write-Host "`n"
 				Write-Host "Settings have been applied!"
@@ -171,9 +174,10 @@
 			# Windows 8.1
 
 				# ThemeTool.exe needs .NET 3.5 which is not installed by default on 8.1
+
 				# Check if .NET 3.5 is installed
 		
-				$35status = Get-WindowsOptionalFeature -Online | Where-Object {$_.FeatureName -eq "NetFx3"} | ForEach-Object { $_.State }
+					$35status = Get-WindowsOptionalFeature -Online | Where-Object {$_.FeatureName -eq "NetFx3"} | ForEach-Object { $_.State }
 
 				# If .NET 3.5 is not installed, install it
 
@@ -254,11 +258,9 @@
 					Set-Service MpsSvc -StartupType "Automatic"
 
 				# Restart the Firewall for changes to go into effect
-
 					Restart-Service -Force MpsSvc
 
                 		# Enable SmartScreen
-
                     			Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "RequireAdmin"
 
 				Write-Host "`n"
@@ -342,7 +344,6 @@
 					Set-Service MpsSvc -StartupType "Automatic"
 
 				# Restart the Firewall for changes to go into effect
-
 					Restart-Service -Force MpsSvc
 
 				Write-Host "`n"
